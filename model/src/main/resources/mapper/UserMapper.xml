@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ljb.test.mapper.UserMapper">
+
+    <resultMap id="baseMap" type="user">
+        <id column="id" property="id"/>
+        <result column="_username" property="userName"/>
+        <result column="_password" property="passWord"/>
+        <result column="_nickname" property="nickName"/>
+        <result column="_age" property="age"/>
+        <result column="_headurl" property="headUrl"/>
+    </resultMap>
+
+    <insert id="saveUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != '' ">
+                _username,
+            </if>
+            <if test="passWord != null and passWord != '' ">
+                _password,
+            </if>
+            <if test="nickName != null and nickName != '' ">
+                _nickname,
+            </if>
+            <if test="age > 0">
+                _age,
+            </if>
+            <if test="headUrl != null and headUrl != '' ">
+                _headurl,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != '' ">
+                #{userName},
+            </if>
+            <if test="passWord != null and passWord != '' ">
+                #{passWord},
+            </if>
+            <if test="nickName != null and nickName != '' ">
+                #{nickName},
+            </if>
+            <if test="age > 0">
+                #{age},
+            </if>
+            <if test="headUrl != null and headUrl != '' ">
+                #{headUrl},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="queryAllUser" resultType="user">
+        select * from user_info
+    </select>
+
+    <select id="queryUserByNmae" parameterType="java.lang.String" resultMap="baseMap">
+        select * from user_info where _username=#{username}
+    </select>
+
+    <update id="editUserInfo" parameterType="user">
+        update user_info
+        <set>
+            <if test="userName != null and userName != '' ">_username=#{userName} ,</if>
+            <if test="passWord != null and passWord != '' ">_password=#{passWord} ,</if>
+            <if test="nickName != null and nickName != '' ">_nickname=#{nickName} ,</if>
+            <if test="age > 0">_age=#{age} ,</if>
+            <if test="headUrl != null and headUrl != '' ">_headurl=#{headUrl} ,</if>
+        </set>
+        where _username=#{userName}
+    </update>
+
+    <select id="queryUserById" parameterType="java.util.List" resultType="user">
+        select * from user_info where id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>
